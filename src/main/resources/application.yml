@@ -1,8 +1,11 @@
 spring:
+  cache:
+    caffeine:
+      spec: maximumSize=100,expireAfterWrite=10s
   datasource:
-    url: jdbc:mysql://localhost:3307/nbcam
+    url: jdbc:mysql://localhost:3306/nbcam
     username: root
-    password: 1234
+    password: 12345678
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     show-sql: true
@@ -13,7 +16,6 @@ spring:
         format_sql: true
     defer-datasource-initialization: true
 
-## ???? ??? ???
 jwt:
   secret:
     key: fsadfsadflsadjfl123123123123l2kj3l13j2l313l21j3l12jsd
