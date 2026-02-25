@@ -36,22 +36,38 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostSummaryListByUsername(username));
     }
 
-    // 1. postId 기준으로 post를 조회하는 API
-    // 캐시에 값이 있으면 바로 리턴, 없으면 DB 조회 후 캐시에 저장
+
+
+//    // 1. postId 기준으로 post를 조회하는 API
+//    // 캐시에 값이 있으면 바로 리턴, 없으면 DB 조회 후 캐시에 저장
+//    @GetMapping("/{postId}")
+//    public ResponseEntity<PostDto> getPostById(@PathVariable long postId) {
+//        return ResponseEntity.ok(postService.getPostById(postId));
+//    }
+//
+//    @PutMapping("/{postId}")
+//    public ResponseEntity<PostDto> updatePostById(@PathVariable long postId, @RequestBody UpdatePostRequest request) {
+//        return ResponseEntity.ok(postService.updatePostById(postId, request));
+//    }
+//
+//    @DeleteMapping("/{postId}")
+//    public ResponseEntity<Void> deletePostById(@PathVariable long postId) {
+//        postService.deletePostById(postId);
+//        return ResponseEntity.ok().build();
+//    }
+
+
+
+
+    // 게시글 Id 기반으로 조회 - 캐시가 있으면 사용, 없으면 DB 조회
     @GetMapping("/{postId}")
     public ResponseEntity<PostDto> getPostById(@PathVariable long postId) {
         return ResponseEntity.ok(postService.getPostById(postId));
     }
 
+    // 게시글 수정시 캐시도 삭제
     @PutMapping("/{postId}")
     public ResponseEntity<PostDto> updatePostById(@PathVariable long postId, @RequestBody UpdatePostRequest request) {
         return ResponseEntity.ok(postService.updatePostById(postId, request));
     }
-
-    @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> deletePostById(@PathVariable long postId) {
-        postService.deletePostById(postId);
-        return ResponseEntity.ok().build();
-    }
-
 }

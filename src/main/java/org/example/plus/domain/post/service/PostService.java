@@ -25,6 +25,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final PostCacheService postCacheService;
 
     public PostDto creatPost(String username, String content) {
 
@@ -69,38 +70,89 @@ public class PostService {
 
 
 
-    @Cacheable(value = "postCache", key = "'id:' + #postId")
+//    @Cacheable(value = "postCache", key = "'id:' + #postId")
+//    public PostDto getPostById(long postId) {
+//
+//        // 1단계: postId 기준으로 캐시에 값이 있는지 없는지 확인 -> @Cacheable
+//
+//        // 2단계: 값이 있으면 바로 리턴 -> @Cacheable
+//
+//        // 3단계: 값이 없으면 직접 DB 조회
+//        log.info("postId={} DB 직접 조회", postId);
+//
+//        // 4단계: 가져온 값을 캐시에 저장 -> @Cacheable
+//
+//        Post post = postRepository.findById(postId).orElseThrow(
+//                () -> new IllegalArgumentException("등록된 포스트가 없습니다.")
+//        );
+//
+//        // 이전 QueryDSL 실습에서 User와 연관관계를 끊음 -> N+1 문제 발생하긴 하는데 일단 그냥 진행
+//        User user = userRepository.findById(post.getUserId()).orElseThrow(
+//                ()-> new IllegalArgumentException("등록된 사용자가 없습니다.")
+//        );
+//
+//        return PostDto.from(post, user.getUsername());
+//    }
+//
+//    @CachePut(value = "postCache", key = "'id:' + #postId")
+//    public PostDto updatePostById(long postId, UpdatePostRequest request) {
+//
+//        Post post = postRepository.findById(postId).orElseThrow(
+//                () -> new IllegalArgumentException("등록된 포스트가 없습니다.")
+//        );
+//
+//        // 이전 QueryDSL 실습에서 User와 연관관계를 끊음 -> N+1 문제 발생하긴 하는데 일단 그냥 진행
+//        User user = userRepository.findById(post.getUserId()).orElseThrow(
+//                ()-> new IllegalArgumentException("등록된 사용자가 없습니다.")
+//        );
+//
+//        post.update(request);
+//        postRepository.save(post);
+//
+//        return PostDto.from(post, user.getUsername());
+//    }
+//
+//    @CacheEvict(value = "postCache", key = "'id:' + #postId")
+//    public void deletePostById(long postId) {
+//
+//        postRepository.deleteById(postId);
+//    }
+
+
+
     public PostDto getPostById(long postId) {
 
-        // 1단계: postId 기준으로 캐시에 값이 있는지 없는지 확인 -> @Cacheable
+        // 1단계: 캐시 있는지 확인
+        PostDto cached = postCacheService.getPostCache(postId);
 
-        // 2단계: 값이 있으면 바로 리턴 -> @Cacheable
+        if (cached != null) {
+            log.info("Redis Data Cache Hit");
+            return cached;
+        }
 
-        // 3단계: 값이 없으면 직접 DB 조회
-        log.info("postId={} DB 직접 조회", postId);
-
-        // 4단계: 가져온 값을 캐시에 저장 -> @Cacheable
-
+        // 2단계: 캐시가 없으면 DB 직접 조회
+        log.info("Redis Data Cache Miss - {}", postId);
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("등록된 포스트가 없습니다.")
         );
 
-        // 이전 QueryDSL 실습에서 User와 연관관계를 끊음 -> N+1 문제 발생하긴 하는데 일단 그냥 진행
         User user = userRepository.findById(post.getUserId()).orElseThrow(
                 ()-> new IllegalArgumentException("등록된 사용자가 없습니다.")
         );
 
-        return PostDto.from(post, user.getUsername());
+        // 3단계: 캐시에 저장
+        PostDto postDto = PostDto.from(post, user.getUsername());
+        postCacheService.savePostCache(postId, postDto);
+
+        return postDto;
     }
 
-    @CachePut(value = "postCache", key = "'id:' + #postId")
     public PostDto updatePostById(long postId, UpdatePostRequest request) {
 
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("등록된 포스트가 없습니다.")
         );
 
-        // 이전 QueryDSL 실습에서 User와 연관관계를 끊음 -> N+1 문제 발생하긴 하는데 일단 그냥 진행
         User user = userRepository.findById(post.getUserId()).orElseThrow(
                 ()-> new IllegalArgumentException("등록된 사용자가 없습니다.")
         );
@@ -108,13 +160,10 @@ public class PostService {
         post.update(request);
         postRepository.save(post);
 
+        // 캐시 삭제(무효화)
+        postCacheService.deletePostCache(postId);
+
         return PostDto.from(post, user.getUsername());
-    }
-
-    @CacheEvict(value = "postCache", key = "'id:' + #postId")
-    public void deletePostById(long postId) {
-
-        postRepository.deleteById(postId);
     }
 }
 
