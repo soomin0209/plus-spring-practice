@@ -24,4 +24,8 @@ jwt:
   secret:
     key: fsadfsadflsadjfl123123123123l2kj3l13j2l313l21j3l12jsd
 
-
+logging:
+  level:
+    root: info
+    org.hibernate.SQL: debug
+    org.hibernate.orm.jdbc.bind: trace
