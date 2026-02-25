@@ -1,3 +1,4 @@
+# 4-1
 CREATE TABLE user (
                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
                       name VARCHAR(50),
@@ -34,3 +35,31 @@ SELECT * FROM user WHERE name = 'user5000';
 # 인덱스 O
 CREATE INDEX idx_user_name ON user(name);
 SELECT * FROM user WHERE name = 'user5000';
+
+
+
+# 4-2
+# 실습 준비
+CREATE TABLE users (
+                       id BIGINT PRIMARY KEY,
+                       name VARCHAR(50),
+                       age INT,
+                       city VARCHAR(50),
+                       INDEX idx_name (name),
+                       INDEX idx_age (age)
+);
+INSERT INTO users (id, name, age, city)
+VALUES
+    (1, 'Viva', 30, 'Seoul'),
+    (2, 'Ravi', 29, 'Busan'),
+    (3, 'Viva', 25, 'Incheon'),
+    (4, 'Minho', 30, 'Daegu');
+
+# 실습 1 - Unique Scan (정확한 한 건 탐색)
+EXPLAIN FORMAT=TRADITIONAL SELECT * FROM users WHERE id = 1;
+
+# 실습 2 - Range Scan (범위 탐색)
+EXPLAIN FORMAT=TRADITIONAL SELECT * FROM users WHERE age BETWEEN 20 AND 30;
+
+# 실습 3 - Table Full Scan (인덱스 없는 컬럼 탐색)
+EXPLAIN FORMAT=TRADITIONAL SELECT * FROM users WHERE city = 'Seoul';
