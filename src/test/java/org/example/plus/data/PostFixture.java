@@ -8,12 +8,12 @@ public class PostFixture {
     public static String DEFAULT_POST_CONTENT = "테스트 게시글 입니다.";
 
     public static Post createPost1() {
-        Post post = new Post(DEFAULT_POST_CONTENT, UserFixture.createUserAdminRole());
+        Post post = new Post(DEFAULT_POST_CONTENT, 1L);
         ReflectionTestUtils.setField(post, "id", 1L);
         return post;
     }
     public static Post createPost2() {
-        Post post = new Post(DEFAULT_POST_CONTENT, UserFixture.createUserAdminRole());
+        Post post = new Post(DEFAULT_POST_CONTENT, 2L);
         ReflectionTestUtils.setField(post, "id", 2L);
         return post;
     }

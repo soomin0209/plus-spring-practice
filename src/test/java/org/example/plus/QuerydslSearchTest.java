@@ -79,40 +79,40 @@ public class QuerydslSearchTest {
         System.out.println("검색 완료");
     }
 
-    @Test
-    @DisplayName("“앨리스”가 작성한 게시글(Post) 조회")
-    void test_case05() {
-        List<Post> result = queryFactory
-                .selectFrom(post)
-                .join(post.user, user)  // SQL의 Inner Join
-                .where(user.username.eq("앨리스"))
-                .fetch();
-
-        System.out.println("검색 완료");
-    }
-
-    @Test
-    @DisplayName("게시글과 작성자 정보를 한 번에 로딩")
-    void test_case06() {
-        List<Post> result = queryFactory
-                .selectFrom(post)
-                .join(post.user, user).fetchJoin()  // N+1 문제 방지
-                .fetch();
-
-        System.out.println("검색 완료");
-    }
-
-    @Test
-    @DisplayName("“리제로 3기 감상평” 게시글의 모든 댓글 조회")
-    void test_case07() {
-        List<Comment> comments = queryFactory
-                .selectFrom(comment)
-                .join(comment.post, post)
-                .where(post.content.eq("리제로 3기 감상평"))
-                .fetch();
-
-        System.out.println("검색 완료");
-    }
+//    @Test
+//    @DisplayName("“앨리스”가 작성한 게시글(Post) 조회")
+//    void test_case05() {
+//        List<Post> result = queryFactory
+//                .selectFrom(post)
+//                .join(post.user, user)  // SQL의 Inner Join
+//                .where(user.username.eq("앨리스"))
+//                .fetch();
+//
+//        System.out.println("검색 완료");
+//    }
+//
+//    @Test
+//    @DisplayName("게시글과 작성자 정보를 한 번에 로딩")
+//    void test_case06() {
+//        List<Post> result = queryFactory
+//                .selectFrom(post)
+//                .join(post.user, user).fetchJoin()  // N+1 문제 방지
+//                .fetch();
+//
+//        System.out.println("검색 완료");
+//    }
+//
+//    @Test
+//    @DisplayName("“리제로 3기 감상평” 게시글의 모든 댓글 조회")
+//    void test_case07() {
+//        List<Comment> comments = queryFactory
+//                .selectFrom(comment)
+//                .join(comment.post, post)
+//                .where(post.content.eq("리제로 3기 감상평"))
+//                .fetch();
+//
+//        System.out.println("검색 완료");
+//    }
 
     @Test
     @DisplayName("게시글 목록을 5개씩 조회 (2페이지: 6~10번 게시글)")

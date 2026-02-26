@@ -87,7 +87,7 @@ class PostServiceTest {
         );
 
 
-        testUser.getPosts().addAll(postList);
+//        testUser.getPosts().addAll(postList);
 
 
         when(userRepository.findUserByUsername(DEFAULT_USERNAME)).thenReturn(Optional.of(testUser));
