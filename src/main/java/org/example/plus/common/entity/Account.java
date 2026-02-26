@@ -1,9 +1,6 @@
 package org.example.plus.common.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +15,9 @@ public class Account {
     private Long id;
 
     private int balance;
+
+    @Version
+    private Long version; // 버전 필드 : 낙관적락 사용하기 위한 필드
 
     public Account(int balance) {
         this.balance = balance;
